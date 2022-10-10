@@ -66,6 +66,7 @@ public class DeviceSimController {
 			}
 			this.repository.updateDeviceStatus(id.get(), ddssStatus);
 			System.out.println("update");
+			System.out.println("http://10.1.0.6:18080/api/v0.1/sim/" + sim);
 			System.out.println(simAction);
 			String simResponse = Util.postAndGetJSON("http://10.1.0.6:18080/api/v0.1/sim/" + sim, simAction);
 			System.out.println(simResponse);
