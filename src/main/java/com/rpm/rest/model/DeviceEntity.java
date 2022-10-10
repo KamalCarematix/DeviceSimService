@@ -9,7 +9,7 @@ public class DeviceEntity implements Serializable {
   private List<String> serailNumbers;
   private String action;
   private List<String> sims;
-public List<String> getSerailNumbers() {
+  public List<String> getSerailNumbers() {
 	return serailNumbers;
 }
 public void setSerailNumbers(List<String> serailNumbers) {
