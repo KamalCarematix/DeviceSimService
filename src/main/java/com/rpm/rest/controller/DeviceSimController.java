@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.rpm.rest.dao.DaoRepository;
 import com.rpm.rest.helper.Util;
@@ -43,6 +44,7 @@ public class DeviceSimController {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		sb.append("\"command\" : ");
+		RestTemplate restTemplate = new RestTemplate();
 
 		System.out.println(entity.getSerailNumbers().toString());
 		for (String serialNo : entity.getSerailNumbers()) {
@@ -68,8 +70,9 @@ public class DeviceSimController {
 			System.out.println("update");
 			System.out.println("http://10.1.0.6:18080/api/v0.1/sim/" + sim);
 			System.out.println(simAction);
-			//String simResponse = Util.postAndGetJSON("http://10.1.0.6:18080/api/v0.1/sim/" + sim, simAction);
-			//System.out.println(simResponse);
+			//String simResponse = Util.postAndGetJSON(, simAction);
+			String simResponse = restTemplate.postForObject("http://10.1.0.6:18080/api/v0.1/sim/" + sim, simAction, String.class);
+			System.out.println(simResponse);
 			this.repository.updateDeviceSimStatus(id.get(), ddssStatus);
 		}
 		// call API which deactivet/active sim by passing listof sim
