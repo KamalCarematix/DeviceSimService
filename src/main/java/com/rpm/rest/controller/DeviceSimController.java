@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.websocket.server.PathParam;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.rpm.rest.dao.DaoRepository;
-import com.rpm.rest.helper.Util;
 import com.rpm.rest.model.DeviceEntity;
 
 @RestController
@@ -44,7 +43,7 @@ public class DeviceSimController {
 	public String getStatus(HttpServletRequest request, HttpServletResponse response, @RequestParam String serialNumber)
 			throws Exception {
 		System.out.println("in thats get call /ddss/sim");
-		RestTemplate restTemplate = new RestTemplate();
+		RestTemplate restTemplate = new RestTemplate(getClientHttpRequestFactory());
 		Optional<Integer> id = this.repository.getAllSimOfDevice(serialNumber);
 		LOGGER.info("Device data sim Model " + id);
 		// call for other microservice which running on port 18080
@@ -54,6 +53,21 @@ public class DeviceSimController {
 		return simResponse;
 
 	}
+	
+	
+
+	//Override timeouts in request factory
+	private SimpleClientHttpRequestFactory getClientHttpRequestFactory()
+	{
+	    SimpleClientHttpRequestFactory clientHttpRequestFactory
+	                      = new SimpleClientHttpRequestFactory();
+	    //Connect timeout
+	    clientHttpRequestFactory.setConnectTimeout(30000);
+	     
+	    //Read timeout
+	    clientHttpRequestFactory.setReadTimeout(30000);
+	    return clientHttpRequestFactory;
+	}
 
 	@PostMapping(value = { "/ddss/sim" }, produces = { "application/json" })
 	public ResponseEntity<Object> deviceActiveDeactive(HttpServletRequest request, HttpServletResponse response,
@@ -61,7 +75,7 @@ public class DeviceSimController {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		sb.append("\"command\" : ");
-		RestTemplate restTemplate = new RestTemplate();
+		RestTemplate restTemplate = new RestTemplate(getClientHttpRequestFactory());
 
 		System.out.println(entity.getSerailNumbers().toString());
 		for (String serialNo : entity.getSerailNumbers()) {
