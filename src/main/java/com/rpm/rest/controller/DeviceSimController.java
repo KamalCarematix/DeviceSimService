@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.websocket.server.PathParam;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -36,6 +38,21 @@ public class DeviceSimController {
 	@GetMapping("/")
 	public String index() {
 		return "redirect:swagger-ui.html";
+	}
+
+	@GetMapping(value = { "/ddss/sim" }, produces = { "application/json" })
+	public String getStatus(HttpServletRequest request, HttpServletResponse response, @RequestParam String serialNumber)
+			throws Exception {
+		System.out.println("in thats get call /ddss/sim");
+		RestTemplate restTemplate = new RestTemplate();
+		Optional<Integer> id = this.repository.getAllSimOfDevice(serialNumber);
+		LOGGER.info("Device data sim Model " + id);
+		// call for other microservice which running on port 18080
+		System.out.println(serialNumber);
+		String sim = removeLastChar(this.repository.getSimOfDevice(id.get()));
+		String simResponse = restTemplate.getForObject("http://10.1.0.6:18080/api/v0.1/sim/" + sim, String.class);
+		return simResponse;
+
 	}
 
 	@PostMapping(value = { "/ddss/sim" }, produces = { "application/json" })
@@ -70,8 +87,9 @@ public class DeviceSimController {
 			System.out.println("update");
 			System.out.println("http://10.1.0.6:18080/api/v0.1/sim/" + sim);
 			System.out.println(simAction);
-			//String simResponse = Util.postAndGetJSON(, simAction);
-			String simResponse = restTemplate.postForObject("http://10.1.0.6:18080/api/v0.1/sim/" + sim, simAction, String.class);
+			// String simResponse = Util.postAndGetJSON(, simAction);
+			String simResponse = restTemplate.postForObject("http://10.1.0.6:18080/api/v0.1/sim/" + sim, simAction,
+					String.class);
 			System.out.println(simResponse);
 			this.repository.updateDeviceSimStatus(id.get(), ddssStatus);
 		}
