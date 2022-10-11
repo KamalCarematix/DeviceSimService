@@ -37,7 +37,7 @@ public class DeviceSimController {
 		return "redirect:swagger-ui.html";
 	}
 
-	@PostMapping(value = { "/ddss/devices" }, produces = { "application/json" })
+	@PostMapping(value = { "/ddss/sim" }, produces = { "application/json" })
 	public ResponseEntity<Object> deviceActiveDeactive(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody DeviceEntity entity) throws Exception {
 		StringBuilder sb = new StringBuilder();
@@ -68,9 +68,16 @@ public class DeviceSimController {
 			System.out.println("update");
 			System.out.println("http://10.1.0.6:18080/api/v0.1/sim/" + sim);
 			System.out.println(simAction);
-			String simResponse = Util.postAndGetJSON("http://10.1.0.6:18080/api/v0.1/sim/" + sim, simAction);
-			System.out.println(simResponse);
-			this.repository.updateDeviceSimStatus(id.get(), ddssStatus);
+			try {
+				String simResponse = Util.postAndGetJSON("http://10.1.0.6:18080/api/v0.1/sim/" + sim, simAction);
+				this.repository.updateDeviceSimStatus(id.get(), ddssStatus);
+				LOGGER.debug("Response from sim API" + simResponse);
+				System.out.println(simResponse);
+			} catch (Exception e) {
+				LOGGER.error("Error when calling sim api ", e.getMessage());
+			}
+			
+			
 		}
 		// call API which deactivet/active sim by passing listof sim
 		// update table DVC_DEVICE_SIM_DETAILS in IS_SIM_SUSPENDED Y/N and
