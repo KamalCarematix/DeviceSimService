@@ -62,10 +62,10 @@ public class DeviceSimController {
 	    SimpleClientHttpRequestFactory clientHttpRequestFactory
 	                      = new SimpleClientHttpRequestFactory();
 	    //Connect timeout
-	    clientHttpRequestFactory.setConnectTimeout(30000);
+	    clientHttpRequestFactory.setConnectTimeout(300000);
 	     
 	    //Read timeout
-	    clientHttpRequestFactory.setReadTimeout(30000);
+	    clientHttpRequestFactory.setReadTimeout(300000);
 	    return clientHttpRequestFactory;
 	}
 
