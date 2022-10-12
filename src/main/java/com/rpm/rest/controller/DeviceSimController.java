@@ -48,6 +48,7 @@ public class DeviceSimController {
 		LOGGER.info("Device data sim Model " + id);
 		// call for other microservice which running on port 18080
 		System.out.println(serialNumber);
+		restTemplate.getForObject("http://google.com", String.class);
 		String sim = removeLastChar(this.repository.getSimOfDevice(id.get()));
 		String simResponse = restTemplate.getForObject("http://10.1.0.6:18080/api/v0.1/sim/" + sim, String.class);
 		return simResponse;
@@ -57,7 +58,7 @@ public class DeviceSimController {
 	
 
 	//Override timeouts in request factory
-	private SimpleClientHttpRequestFactory getClientHttpRequestFactory()
+	private static SimpleClientHttpRequestFactory getClientHttpRequestFactory()
 	{
 	    SimpleClientHttpRequestFactory clientHttpRequestFactory
 	                      = new SimpleClientHttpRequestFactory();
@@ -118,6 +119,12 @@ public class DeviceSimController {
 
 		return new ResponseEntity<Object>(map, HttpStatus.OK);
 
+	}
+	public static void main(String[] args) {
+		RestTemplate restTemplate = new RestTemplate(getClientHttpRequestFactory());
+		restTemplate.getForObject("http://google.com", String.class);
+
+		
 	}
 
 	private String removeLastChar(String s) {
