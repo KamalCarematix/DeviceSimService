@@ -48,9 +48,9 @@ public class DeviceSimController {
 		LOGGER.info("Device data sim Model " + id);
 		// call for other microservice which running on port 18080
 		System.out.println(serialNumber);
-		restTemplate.getForObject("http://google.com", String.class);
+		//restTemplate.getForObject("http://google.com", String.class);
 		String sim = removeLastChar(this.repository.getSimOfDevice(id.get()));
-		String simResponse = restTemplate.getForObject("http://10.1.0.6:18080/api/v0.1/sim/" + sim, String.class);
+		String simResponse = restTemplate.getForObject("http://127.0.0.1:18080/api/v0.1/sim/" + sim, String.class);
 		return simResponse;
 
 	}
